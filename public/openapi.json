@@ -1,0 +1,1 @@
+{"openapi":"3.0.1","info":{"title":"NextJS Swagger","version":"0.1.0"},"paths":{"/api/hello":{"get":{"description":"Returns the hello world","responses":{"200":{"description":"hello world"}}}}},"components":{},"tags":[]}
