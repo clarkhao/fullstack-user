@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native","linux-musl"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  name String @unique
+  photo String? @unique
+  githubUser GithubUser? @relation(fields: [githubUserId], references: [githubId])
+  githubUserId Int? @unique
+  emailUser EmailUser? @relation(fields: [email], references: [email])
+  email String? @unique
+  token Token[]
+
+  @@map("user")
+}
+
+model GithubUser {
+  id Int @id @default(autoincrement())
+  githubId Int @unique
+  githubRepos Int
+  user User?
+
+  @@map("github_user")
+}
+
+model EmailUser {
+  id Int @id @default(autoincrement())
+  email String @unique
+  salt String 
+  hash String 
+  createAt DateTime @default(now()) @db.Timestamptz(3)
+  lastUpdateAt DateTime @default(now()) @db.Timestamptz(3)
+  user User?
+
+  @@map("email_user")
+}
+
+model Token {
+  id Int @default(autoincrement())
+  role Role[]
+  emailToken String?
+  user User @relation(fields: [userId], references: [id])
+  userId Int
+
+  @@id([id,userId])
+  @@map("token")
+}
+
+enum Role {
+  Seller
+  Buyer
+  Admin
+}

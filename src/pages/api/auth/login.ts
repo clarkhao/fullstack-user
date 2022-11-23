@@ -1,9 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 /**
  * @swagger
- * /api/auth/signup:
+ * /api/auth/login:
  *   post:
- *     description: user sign up with name, email and pwd
+ *     description: log in with user info
  *     requestBody:
  *       description: user information post for signup 
  *       content:
@@ -19,19 +19,16 @@ import type { NextApiRequest, NextApiResponse } from 'next'
  *                type: string
  *     responses:
  *       200:
- *         description: sign up successfully.
- *         content:
- *           application/json:
- *             type: Object
- *             properties:
- *               message:
- *                 type: string
- *       401:
- *         description: bad authentication
+ *         description: successfully login with email and password
+ *         headers:
+ *           Set-cookie:
+ *             schema:
+ *               type: string
+ *               example: sessionId=xxxxx; Max-Age=120000; Httponly; Secure; Samesite
+ *       400: 
+ *         $ref: '#/components/responses/BadRequest'
  *       404:
- *         description: bad email
- *       409:
- *         description: already used name or email
+ *         $ref: '#/components/responses/NotFound'
  *       500:
- *         description: server mistake
+ *         $ref: '#/components/responses/ServerMistake'
  */
