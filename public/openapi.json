@@ -1,1 +1,469 @@
-{"openapi":"3.0.1","info":{"title":"NextJS Swagger","version":"0.1.0"},"paths":{"/api/auth/githuboauth":{"get":{"description":"github oauth login","responses":{"200":{"description":"successfully login with the github oauth account"},"400":{"description":"failed to log in","content":{"application/json":{"type":"Object","properties":{"message":{"type":"string"}}}}}}}},"/api/auth/login":{"post":{"description":"log in with user info"}},"/api/auth/logout":{"post":{"description":"log out"}},"/api/auth/signup":{"post":{"description":"user sign up with name, email and pwd","requestBody":{"description":"user information post for signup","content":{"application/x-www-form-urlencoded":{"schema":{"type":"object","properties":{"secret":{"type":"string"},"sign":{"type":"string"},"data":{"type":"string"}}}}}},"responses":{"200":{"description":"sign up successfully.","content":{"application/json":{"type":"Object","properties":{"message":{"type":"string"}}}}},"401":{"description":"bad authentication"},"404":{"description":"bad email"},"409":{"description":"already used name or email"},"500":{"description":"server mistake"}}}},"/api/hello":{"get":{"description":"Returns the hello world","responses":{"200":{"description":"hello world"}}}},"/api/users/{id}":{"get":{"description":"get user info with user id"}},"/api/users":{"get":{"description":"get all user info of users signed up here"}}},"components":{},"tags":[]}
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "NextJS API",
+    "description": "api of fullstack next.js app",
+    "version": "0.1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "development mode url"
+    }
+  ],
+  "components": {
+    "responses": {
+      "BadRequest": {
+        "description": "Client side errors",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/SimpleMessage"
+            }
+          }
+        }
+      },
+      "FailedAuth": {
+        "description": "Authentication information is missing or invalid",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/SimpleMessage"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "The user name or email not found or invalid",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/SimpleMessage"
+            }
+          }
+        }
+      },
+      "ConflictId": {
+        "description": "Already used user name or email",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/SimpleMessage"
+            }
+          }
+        }
+      },
+      "ServerMistake": {
+        "description": "Server Inner Mistake",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/SimpleMessage"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "SimpleMessage": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "user id"
+          },
+          "name": {
+            "type": "string",
+            "description": "user name"
+          },
+          "email": {
+            "type": "string",
+            "description": "user email"
+          },
+          "photo": {
+            "type": "string",
+            "description": "user profile photo url"
+          }
+        }
+      },
+      "Encrypted": {
+        "type": "object",
+        "properties": {
+          "secret": {
+            "type": "string"
+          },
+          "sign": {
+            "type": "string",
+            "description": "signature by client side"
+          },
+          "data": {
+            "type": "string",
+            "description": "encrypted data by client side"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "HttpOnlyCookie": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "sessionId"
+      }
+    }
+  },
+  "paths": {
+    "/api/auth/callback": {
+      "get": {
+        "description": "varify the token from email callback and if OK, update the user role",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "token",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "verify the token successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#components/schemas/SimpleMessage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/ConflictId"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerMistake"
+          }
+        }
+      }
+    },
+    "/api/auth/githuboauth": {
+      "head": {
+        "description": "github oauth login",
+        "paremeters": [
+          {
+            "in": "query",
+            "name": "code",
+            "schema": {
+              "type": "string"
+            },
+            "description": "The code sent by Github which will be used for token fetch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully login with the github oauth account",
+            "headers": {
+              "Set-cookie": {
+                "schema": {
+                  "type": "string",
+                  "example": "sessionId=xxxxx; Max-Age=120000; Httponly; Secure; Samesite"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/FailedAuth"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerMistake"
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "description": "log in with user info",
+        "requestBody": {
+          "description": "user information post for signup",
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "secret": {
+                    "type": "string"
+                  },
+                  "sign": {
+                    "type": "string"
+                  },
+                  "data": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successfully login with email and password",
+            "headers": {
+              "Set-cookie": {
+                "schema": {
+                  "type": "string",
+                  "example": "sessionId=xxxxx; Max-Age=120000; Httponly; Secure; Samesite"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerMistake"
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "get": {
+        "description": "log out",
+        "security": [
+          {
+            "HttpOnlyCookie": []
+          }
+        ],
+        "parameteres": [
+          {
+            "in": "cookie",
+            "name": "sessionId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully log out",
+            "headers": {
+              "Set-cookie": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/FailedAuth"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerMistake"
+          }
+        }
+      }
+    },
+    "/api/auth/signup": {
+      "post": {
+        "description": "user sign up with name, email and pwd",
+        "requestBody": {
+          "description": "user information post for signup",
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#components/schemas/Encrypted"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "sign up successfully and afterwards send a email for confirmation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#components/schemas/SimpleMessage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/ConflictId"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerMistake"
+          }
+        }
+      }
+    },
+    "/api/hello": {
+      "get": {
+        "description": "Returns the hello world",
+        "responses": {
+          "200": {
+            "description": "hello world"
+          }
+        }
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "description": "get user info details by id",
+        "security": [
+          {
+            "HttpOnlyCookie": []
+          }
+        ],
+        "parameteres": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully get user information"
+          }
+        }
+      },
+      "put": {
+        "description": "update the user info of own such as name, email or pwd",
+        "security": [
+          {
+            "HttpOnlyCookie": []
+          }
+        ],
+        "parameteres": [
+          {
+            "in": "cookie",
+            "name": "sessionId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "user information preparing for updating",
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#components/schemas/Encrypted"
+              }
+            }
+          }
+        },
+        "response": {
+          "200": {
+            "description": "successfully updated the user info",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#components/schemas/SimpleMessage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/ConflictId"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerMistake"
+          }
+        }
+      },
+      "delete": {
+        "description": "cancel own account",
+        "security": [
+          {
+            "HttpOnlyCookie": []
+          }
+        ],
+        "parameteres": [
+          {
+            "in": "cookie",
+            "name": "sessionId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully delete the account",
+            "headers": {
+              "Set-cookie": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerMistake"
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "description": "get all user info of users signed up here by admin",
+        "security": [
+          {
+            "HttpOnlyCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully get user list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/FailedAuth"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerMistake"
+          }
+        }
+      },
+      "delete": {
+        "description": "delete a list of users by admin"
+      }
+    }
+  },
+  "tags": []
+}

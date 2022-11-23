@@ -1,0 +1,1 @@
+export {schema} from './graphql/schema';
