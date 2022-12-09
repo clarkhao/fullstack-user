@@ -1,4 +1,5 @@
 import { withSwagger } from 'next-swagger-doc';
+const config = require('config');
 
 const swaggerHandler = withSwagger({
   definition: {
@@ -10,14 +11,14 @@ const swaggerHandler = withSwagger({
     },
     servers: [
         {
-            url: 'http://localhost:3000',
+            url: (process.env[config.get('server.host')] || '').concat(":").concat(process.env[config.get('server.port')] || ''),
             description: 'development mode url'
         },
     ],
     components: {
         responses: {
             BadRequest: {
-                description: 'Client side errors',
+                description: '400 Client side errors',
                 content: {
                     'application/json': {
                         schema: {
@@ -27,7 +28,7 @@ const swaggerHandler = withSwagger({
                 }
             },
             FailedAuth: {
-                description: 'Authentication information is missing or invalid',
+                description: '401 Authentication information is missing or invalid',
                 content: {
                     'application/json': {
                         schema: {
@@ -37,7 +38,7 @@ const swaggerHandler = withSwagger({
                 }
             },
             NotFound: {
-                description: 'The user name or email not found or invalid',
+                description: '404 The user name or email not found or invalid',
                 content: {
                     'application/json': {
                         schema: {
@@ -47,7 +48,7 @@ const swaggerHandler = withSwagger({
                 }
             },
             ConflictId: {
-                description: 'Already used user name or email',
+                description: '409 Already used user name or email',
                 content: {
                     'application/json': {
                         schema: {
@@ -57,7 +58,7 @@ const swaggerHandler = withSwagger({
                 }
             },
             ServerMistake: {
-                description: 'Server Inner Mistake',
+                description: '500 Server Inner Mistake',
                 content: {
                     'application/json': {
                         schema: {
@@ -119,6 +120,11 @@ const swaggerHandler = withSwagger({
                 type: 'apiKey',
                 in: 'cookie',
                 name: 'sessionId'
+            },
+            bearerAuth: {
+                type: 'http',
+                scheme: 'bearer',
+                bearerFormat: 'JWT'
             }
         }
     },

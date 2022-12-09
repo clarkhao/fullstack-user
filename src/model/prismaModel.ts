@@ -2,7 +2,7 @@
  * Model User
  * 
  */
-type User = {
+export type User = {
     id: number
     name: string
     photo: string | null
@@ -13,7 +13,7 @@ type User = {
    * Model GithubUser
    * 
    */
-type GithubUser = {
+export type GithubUser = {
     id: number
     githubId: number
     githubRepos: number
@@ -22,7 +22,7 @@ type GithubUser = {
   /**
    * Model EmailUser
    */
-type EmailUser = {
+export type EmailUser = {
     id: number
     email: string
     salt: string
@@ -33,17 +33,15 @@ type EmailUser = {
   /**
    * Model Token
    */
-type Token = {
+export type Token = {
     id: number
     role: Role[]
     emailToken: string | null
     userId: number
 }
 
-enum Role {
+export enum Role {
     Seller = 'Seller',
     Buyer ='Buyer',
     Admin ='Admin'
 };
-
-export {User,GithubUser,EmailUser,Token,Role};

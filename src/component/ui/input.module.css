@@ -1,0 +1,23 @@
+.wrapper {
+    width: 100%;
+    height: 80px;
+    position: relative;
+}
+.wrapper svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    position: absolute;
+    z-index: 1;
+    top: calc((40px - 1.5rem)/2);
+    left: 5px;
+}
+.wrapper input {
+    width: 100%;
+    height: 50%;
+    font-size: 1.5rem;
+    padding-left: 30px;
+}
+.wrapper p {
+    color: red;
+    font-size: 1.2rem;
+}

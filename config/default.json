@@ -10,31 +10,19 @@
     },
     "tokens": {
         "key": "JWT_KEY",
-        "resend_key": "JWT_RESEND_KEY",
-        "api_key": "SECRET_PUBLIC_KEY"
+        "email_key": "JWT_EMAIL_KEY"
     },
     "server": {
-        "host": "http://192.168.3.55",
+        "host": "SERVER_HOST",
         "port": "PORT"
     },
     "frontend": {
-        "home_page": "http://192.168.3.55:3000",
+        "home_page": "HOME_PAGE",
         "word": "WORD"
     },
-    "db": {
-        "host": "DB_HOST",
-        "user": "DB_ADMIN",
-        "name": "DB_NAME",
-        "pwd": "DB_PWD",
-        "port": 5432,
-        "schema_user": {
-            "name": "SCHEMA_USER",
-            "table_oauth": {
-                "name": "TABLE_OAUTH"
-            }
-        }
-    },
     "mailer": {
-        "port": "MAIL_PORT"
+        "port": "MAIL_PORT",
+        "auth_user": "MAIL_USER",
+        "auth_pwd": "MAIL_PWD"
     }
 }

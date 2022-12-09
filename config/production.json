@@ -1,0 +1,15 @@
+{
+    "db": {
+        "host": "DB_HOST",
+        "user": "DB_ADMIN",
+        "name": "DB_NAME",
+        "pwd": "DB_PWD",
+        "port": 5432,
+        "schema_user": {
+            "name": "SCHEMA_USER",
+            "table_oauth": {
+                "name": "TABLE_OAUTH"
+            }
+        }
+    }
+}
