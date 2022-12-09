@@ -1,10 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { NextRequest } from 'next/server';
+import {getCodeFromGithub,
+        getTokenFromGithub, 
+        getUserInfoWithToken} from '../../../service';
 
 /**
  * @swagger
  * /api/auth/githuboauth:
- *   head:
+ *   get:
  *     description: github oauth login
  *     paremeters:
  *       - in: query

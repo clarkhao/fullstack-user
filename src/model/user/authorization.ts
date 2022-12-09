@@ -2,7 +2,6 @@ import { Token,Role } from "../prismaModel";
 import jwt from 'jsonwebtoken';
 const config = require('config');
 import {PGConnect} from '../../utils';
-import { threadId } from "worker_threads";
 require('dotenv').config();
 
 enum TokenType {
@@ -32,34 +31,25 @@ class Authorization implements Token {
             { expiresIn: duration});
     }
     public async setRole(role: Role) {
-        const roles = await this.db.connect(`
-                select * from auth.token as t
-                where t."userId"=$1;
-            `, [this.userId], false)
-            .then(query => query as Token[])
-            .then(query => {
-                if(query.length > 0) {
-                    return query[0].role.slice(1,-1).toString().split(',');
-                }
-            })
-        console.log(`roles: ${roles}`)
+        const roles = await this.readRole();
+        console.log(`roles: ${roles}, type: ${typeof roles}`)
         if(roles !== undefined) {
-            console.log(`role: ${role}`);
-            if(roles.length > 0 && role in roles) {
+            if(roles.length > 0 && roles.includes(role.toString())) {
                 return false;
             } else {
-                this.role = [...roles.map(v => findName(v)), role];
+                const result = [...(roles.map(v => findName(v))), role];
+                if([...roles].includes(''))
+                    this.role = result.slice(1,);
+                else 
+                    this.role = result;
                 return true;
             }
-        } else {
-            this.role = [...this.role, role];
-            console.log(`here: ${this.role}`)
-            return true;
         }
     }
     public async updateRole(role: Role) {
         try {
             const check = await this.setRole(role);
+            console.log(`check: ${check}`)
             if(!check) {
                 return false
             } else {
@@ -77,7 +67,16 @@ class Authorization implements Token {
             return Promise.reject(err);
         }
     }
-    
+    public readRole() {
+        return this.db.connect(`
+        select * from auth.token
+        where "userId"=$1;
+        `, [this.userId], false)
+        .then(query => query as Token[])
+        .then(query => {
+            return query[0].role.slice(1,-1).toString().split(',');
+        })
+    }
 }
 
 export {Authorization,TokenType}

@@ -1,4 +1,4 @@
-import {EmailUser,Role} from '../prismaModel';
+import {EmailUser,Role, Token} from '../prismaModel';
 import { MainUser } from './user';
 import {ID} from './oauthUser';
 const config = require('config');
@@ -7,13 +7,13 @@ const crypto = require('crypto');
 
 type Count = {count: string};
 
-class CustomUser extends MainUser<ID> implements EmailUser {
+class CustomUser extends MainUser<Token> implements EmailUser {
     email: string;
     salt: string;
     hash: string;
     createAt: Date = new Date();
     lastUpdateAt: Date = new Date();
-    public constructor(db:PGConnect, name:string, hash: string,email?:string, ) {
+    public constructor(db:PGConnect, name:string, hash: string,email?:string) {
         super(db, name);
         this.email = email || '';
         this.salt = crypto.randomBytes(16).toString('hex');; 
@@ -35,7 +35,7 @@ class CustomUser extends MainUser<ID> implements EmailUser {
             select $7, $8, "id" from new_user
             returning *;
         `, [this.email, this.salt, this.hash, this.name, this.githubUserId, this.photo, [], null], false)
-        .then(res => res as ID[]);
+        .then(res => res as Token[]);
     }
     public readUser() {
         return this.db.connect<Count>(`

@@ -17,7 +17,7 @@ const sendEmailWithToken = async (email: string, id:number) => {
         const status = parseInt(info.response.split(' ')[0]);
         console.log(`status: ${status}`);
         if(status >= 200 && status < 300)
-            return Promise.resolve({token, res: true});
+            return Promise.resolve({token, res: true, email, id});
         else
             return Promise.reject('404 failed to send email.');
     }); 

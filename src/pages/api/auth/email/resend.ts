@@ -33,7 +33,7 @@ import {sendEmailWithToken} from '../../../../service';
  */
 
 async function ResendEmailHandler (req: NextApiRequest, res: NextApiResponse) {
-    const result = await sendEmailWithToken('clarktotoro@163.com', 12);
+    const result = await sendEmailWithToken('clarktotoro@163.com', 13);
     if(result.res)
         res.status(200).send('ok');
     else
