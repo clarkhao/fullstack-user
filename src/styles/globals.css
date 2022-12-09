@@ -12,6 +12,8 @@
   --color-text: var(--vt-c-text-light-1);
 
   --section-gap: 160px;
+
+  --color-button-background: var(--vt-c-divider-light-1);
 }
 .layout-dark {
   --color-background: var(--vt-c-black);
@@ -23,9 +25,17 @@
 
   --color-heading: var(--vt-c-text-dark-1);
   --color-text: var(--vt-c-text-dark-2);
-}
 
-#layout {
+  --color-button-background: var(--vt-c-white);
+}
+#__next {
+  height: 100%;
+  width: 100%;
+  position: relative;
   color: var(--color-text);
   background: var(--color-background);
+}
+
+button {
+  background-color: var(--color-button-background);
 }

@@ -6,7 +6,8 @@ type Credentials = {
     host: string,
     database: string,
     password: string,
-    port: number
+    port: number,
+    //connectionTimeoutMillis: number
 }
 class PGConnect {
     private credentials: Credentials;
@@ -17,7 +18,8 @@ class PGConnect {
             host: process.env[config.get('db.host')] || '',
             database: db,
             password: process.env[config.get('db.pwd')] || '',
-            port: config.get('db.port')
+            port: config.get('db.port'),
+            //connectionTimeoutMillis: 2000
         }
         this.pool = new Pool(this.credentials);
     }

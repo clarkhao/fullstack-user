@@ -1,5 +1,6 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { NextRequest } from 'next/server';
+
 /**
  * @swagger
  * /api/auth/githuboauth:
@@ -25,7 +26,7 @@ import { NextRequest } from 'next/server';
  *         $ref: '#/components/responses/ServerMistake'
  */
 function handler(req: NextApiRequest, res: NextApiResponse) {
-    
+    res.status(200).send("OK");
 };
 
 export default handler;
