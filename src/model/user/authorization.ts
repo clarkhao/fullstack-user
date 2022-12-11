@@ -26,12 +26,15 @@ class Authorization implements Token {
     }
     //duration: i.e. '120s'
     public generateToken(duration: string, tokenType: keyof typeof TokenType) {
-        return jwt.sign({id: this.userId}, 
+        this.emailToken = jwt.sign({id: this.userId}, 
             process.env[config.get(TokenType[tokenType])] || '', 
             { expiresIn: duration});
     }
     public async setRole(role: Role) {
-        const roles = await this.readRole();
+        const roles = await this.read()
+            .then(query => {
+                return query[0].role.slice(1,-1).toString().split(',');
+            });
         console.log(`roles: ${roles}, type: ${typeof roles}`)
         if(roles !== undefined) {
             if(roles.length > 0 && roles.includes(role.toString())) {
@@ -67,15 +70,21 @@ class Authorization implements Token {
             return Promise.reject(err);
         }
     }
-    public readRole() {
+    public read() {
         return this.db.connect(`
         select * from auth.token
         where "userId"=$1;
         `, [this.userId], false)
         .then(query => query as Token[])
-        .then(query => {
-            return query[0].role.slice(1,-1).toString().split(',');
-        })
+        
+    }
+    public updateToken() {
+        return this.db.connect(`
+        update auth.token
+        set "emailToken"=$1
+        where "userId"=$2;
+        `, [this.emailToken, this.userId])
+        .then(query => query as boolean);
     }
 }
 

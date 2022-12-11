@@ -2,9 +2,9 @@ import { TokenType } from '../../../model';
 const config = require('config');
 import jwt from 'jsonwebtoken';
 
-const validateEmail = (token: string) => {
+const validateToken = (token: string, tokenType: keyof typeof TokenType) => {
     try {
-        const payload = jwt.verify(token, process.env[config.get(TokenType['EMAIL'])] || '');
+        const payload = jwt.verify(token, process.env[config.get(TokenType[tokenType])] || '');
         console.log(payload);
         return Promise.resolve(payload);
     } catch (err) {
@@ -13,4 +13,4 @@ const validateEmail = (token: string) => {
     
 }
 
-export {validateEmail};
+export {validateToken};

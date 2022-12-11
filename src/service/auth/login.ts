@@ -63,11 +63,16 @@ const verifyHash = (data: {loginData:SignUp, dbData: SaltType}) => {
 const checkRoleAndSendToken = (data: {verify: boolean, id: number}) => {
     if(data.verify) {
         const auth = new Authorization(data.id, db);
-        return auth.readRole()
+        return auth.read()
             .then(query => {
+                return query[0].role.slice(1,-1).toString().split(',');
+            })
+            .then(async query => {
                 console.log(query);
                 if(query[0] !== '') {
-                    return {check: query, token: auth.generateToken('120s','API')}
+                    auth.generateToken('3d','API');
+                    const result = await auth.updateToken();
+                    return {check: query && result, token: auth.emailToken}
                 } else {
                     return Promise.reject(`401 not completed signup`);
                 }
