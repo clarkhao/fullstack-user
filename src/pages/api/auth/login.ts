@@ -52,7 +52,7 @@ async function LoginHandler (req: NextApiRequest, res: NextApiResponse) {
             return checkRoleAndSendToken(verify)
                 .then(query => {
                     if(query.check) {
-                        setCookie('token', query.token, { expires: new Date(Date.now() + 120000), httpOnly: true, secure: true, sameSite: true });
+                        setCookie('token', query.token, { req,res, expires: new Date(Date.now() + 259200000), httpOnly: true, secure: true, sameSite: true });
                         return true;
                     } else {
                         return false;
@@ -64,8 +64,7 @@ async function LoginHandler (req: NextApiRequest, res: NextApiResponse) {
             const status = parseInt(err.toString().split(' ')[0]);
             res.status(status).json({message: err});
         })
-        if(result) 
-            res.status(200).json({message: 'ok'});
+        res.status(200).json({message: 'ok'});
 }
 
 export default LoginHandler;

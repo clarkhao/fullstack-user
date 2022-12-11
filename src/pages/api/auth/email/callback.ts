@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import {validateEmail, updateRoleInDB} from '../../../../service';
-import {TokenExpiredError} from 'jsonwebtoken';
+import {validateToken, updateRoleInDB} from '../../../../service';
 import { setCookie } from 'cookies-next';
 
 type Payload = {
@@ -38,7 +37,7 @@ type Payload = {
 
 async function ValidateEmailHandler (req: NextApiRequest, res: NextApiResponse) {
         console.log(`token: ${req.query['code']}`);
-        return validateEmail(req.query['code'] as string)
+        return validateToken(req.query['code'] as string, 'EMAIL')
             .then(payload => payload as Payload)
             .then(payload => {
                 const {id, ...other} = payload;
@@ -48,7 +47,7 @@ async function ValidateEmailHandler (req: NextApiRequest, res: NextApiResponse) 
                 return updateRoleInDB(id);
             }).then(result => {
                 if(result.check){
-                    setCookie('token', result.token, { expires: new Date(Date.now() + 120000), httpOnly: true, secure: true, sameSite: true });
+                    setCookie('token', result.token, { expires: new Date(Date.now() + 259200000), httpOnly: true, secure: true, sameSite: true });
                     res.status(200).json({message: 'ok'});
                 } else {
                     res.status(301).json({message: 'signup completed'});

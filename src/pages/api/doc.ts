@@ -129,7 +129,7 @@ const swaggerHandler = withSwagger({
             HttpOnlyCookie: {
                 type: 'apiKey',
                 in: 'cookie',
-                name: 'sessionId'
+                name: 'token'
             },
             bearerAuth: {
                 type: 'http',
