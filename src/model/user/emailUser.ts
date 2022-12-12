@@ -1,11 +1,12 @@
-import {EmailUser,Role, Token} from '../prismaModel';
+import {EmailUser,Role, Token, User} from '../prismaModel';
 import { MainUser } from './user';
 import {ID} from './oauthUser';
 const config = require('config');
 import {PGConnect} from '../../utils';
 const crypto = require('crypto');
 
-type Count = {count: string};
+type Count = Pick<User, 'name'|'email'>;
+type CheckUpdate = {update: string};
 
 class CustomUser extends MainUser<Token> implements EmailUser {
     email: string;
@@ -13,10 +14,10 @@ class CustomUser extends MainUser<Token> implements EmailUser {
     hash: string;
     createAt: Date = new Date();
     lastUpdateAt: Date = new Date();
-    public constructor(db:PGConnect, name:string, hash: string,email?:string) {
+    public constructor(db:PGConnect, name:string, hash?: string,email?:string) {
         super(db, name);
         this.email = email || '';
-        this.salt = crypto.randomBytes(16).toString('hex');; 
+        this.salt = crypto.randomBytes(16).toString('hex');
         this.hash = crypto.pbkdf2Sync(hash, this.salt, 1000, 64, `sha512`).toString(`hex`);
     }
     public createUser() {
@@ -39,13 +40,37 @@ class CustomUser extends MainUser<Token> implements EmailUser {
     }
     public readUser() {
         return this.db.connect<Count>(`
-            select count(*)
-            from auth.user as u
-            where u.name=$1 or u.email=$2;
+        SELECT
+        CASE
+          WHEN (SELECT COUNT(*) FROM auth.user WHERE name = $1) > 0 
+          THEN (SELECT COUNT(*) FROM auth.user WHERE name = $1)
+          ELSE 0
+        END as name,
+        CASE
+          WHEN (SELECT COUNT(*) FROM auth.user WHERE email = $2) > 0 
+          THEN (SELECT COUNT(*) FROM auth.user WHERE email = $2)
+          ELSE 0
+        END as email;
         `, [this.name, this.email])
         .then(res => res as Count[])
-        .then(row => parseInt(row[0].count) === 0);
+    }
+    public checkUpdate() {
+        return this.db.connect(`
+        SELECT
+        CASE
+          WHEN (SELECT name FROM auth.user WHERE email = $2) = $1
+          THEN 'photo'
+          ELSE (SELECT
+                CASE
+                WHEN (SELECT COUNT(*) FROM auth.user WHERE name = $1) > 0 
+                THEN 'name repeat'
+                ELSE 'name repeat not'
+          END)
+        END as update;
+        `, [this.name, this.email])
+        .then(res => res as CheckUpdate[]);
     }
 }
 
 export {CustomUser};
+export type {Count,CheckUpdate};

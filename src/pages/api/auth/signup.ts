@@ -52,8 +52,9 @@ async function SignUpHandler(req: NextApiRequest, res: NextApiResponse) {
             console.log(err);
             const status = parseInt(err.toString().split(' ')[0]);
             res.status(status).json({message: err});
-        });
-        res.status(200).json({'email_token': mailerRes?.token,'email': mailerRes?.email, 'id': mailerRes?.id});
+        })
+    if(mailerRes?.res)
+        res.status(200).json({'email_token': mailerRes?.token, 'id': mailerRes?.id});
 };
 
 export default SignUpHandler;

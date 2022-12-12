@@ -3,6 +3,8 @@ const config = require('config');
 import {Authorization, TokenType} from '../../../model';
 import {validateToken} from '../../../service';
 import { db } from '../../../utils';
+import { setCookie } from 'cookies-next';
+
 /**
  * @swagger
  * /api/auth/logout:
@@ -22,6 +24,10 @@ import { db } from '../../../utils';
  *           Set-cookie:
  *             schema:
  *               type: string
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#components/schemas/SimpleMessage'
  *       401: 
  *         $ref: '#/components/responses/FailedAuth'
  *       500:
@@ -40,6 +46,7 @@ async function LogoutHandler (req: NextApiRequest, res: NextApiResponse) {
                 const query = await auth.read();
                 if(query[0].emailToken === cookies.token) {
                     auth.emailToken = null;
+                    setCookie('token', '', { req,res, expires: new Date(Date.now() + 1000), httpOnly: true, secure: true, sameSite: true });
                     return auth.updateToken();
                 } else {
                     return Promise.reject(`401 invalid token`);
@@ -50,7 +57,8 @@ async function LogoutHandler (req: NextApiRequest, res: NextApiResponse) {
                 const status = parseInt(err.toString().split(' ')[0]);
                 res.status(status).json({message: err});
             })
-        res.status(200).json({message: 'ok'});            
+        if(result)
+            res.status(200).json({message: 'ok'});            
     }
 }
 
