@@ -30,7 +30,7 @@ class PGConnect {
         return this.pool.connect().then(client => {
             return client.query(text, values).then(res => {
                 client.release();
-                if((res.command === 'INSERT' || res.command === 'UPDATE') && option) {
+                if((res.command === 'INSERT' || res.command === 'UPDATE' || res.command === 'DELETE') && option) {
                     if(res.rowCount > 0)
                         return true;
                     else 

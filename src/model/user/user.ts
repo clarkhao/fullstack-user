@@ -16,9 +16,9 @@ abstract class MainUser<T> implements User {
     public updateUser() {
         return this.db.connect(`
             update auth.user
-            set name=$1
-            where email=$2;
-        `,[this.name, this.email])
+            set name=$1, photo=$2
+            where id=$3;
+        `,[this.name, this.photo, this.id])
         .then(res => {
             return res as boolean;
         });

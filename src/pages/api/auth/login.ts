@@ -1,6 +1,8 @@
 import { setCookie } from 'cookies-next';
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { Authorization } from '../../../model';
 import {decryptBody, getHashAndSaltFromDB, verifyHash, checkRoleAndSendToken} from '../../../service';
+import { db } from '../../../utils';
 /**
  * @swagger
  * /api/auth/login:
@@ -40,6 +42,7 @@ import {decryptBody, getHashAndSaltFromDB, verifyHash, checkRoleAndSendToken} fr
  */
 
 async function LoginHandler (req: NextApiRequest, res: NextApiResponse) {
+    let id = 0;
     const result = await decryptBody(req.body.secret, req.body.sign, req.body.data)
         .then(async data => {
             console.log(`dataDecrypted: ${data}`);
@@ -49,6 +52,7 @@ async function LoginHandler (req: NextApiRequest, res: NextApiResponse) {
             return verifyHash(query);
         })
         .then(verify => {
+            id = verify.id;
             return checkRoleAndSendToken(verify)
                 .then(query => {
                     if(query.check) {
@@ -62,9 +66,18 @@ async function LoginHandler (req: NextApiRequest, res: NextApiResponse) {
         .catch((err: Error) => {
             console.log(`err: ${err}`);
             const status = parseInt(err.toString().split(' ')[0]);
-            res.status(status).json({message: err});
+            if(status === 401) {
+                const auth = new Authorization(id,db);
+                const token = auth.generateToken('12000s','EMAIL');
+                console.log(id);
+                console.log(auth.emailToken);
+                res.status(301).json({'email_token': auth.emailToken, 'id': id});
+            } else {
+                res.status(status).json({message: err});
+            }
         })
-        res.status(200).json({message: 'ok'});
+        if(result)
+            res.status(200).json({message: 'ok',id});
 }
 
 export default LoginHandler;

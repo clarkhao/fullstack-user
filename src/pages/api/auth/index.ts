@@ -44,7 +44,8 @@ async function AuthenticationHandler (req: NextApiRequest, res: NextApiResponse)
                 const status = parseInt(err.toString().split(' ')[0]);
                 res.status(status).json({message: err});
             })
-        res.status(200).json({message: 'ok'});
+        if(result)
+            res.status(200).json({message: 'ok'});
     }
 }
 

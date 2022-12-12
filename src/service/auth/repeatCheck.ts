@@ -11,10 +11,12 @@ const signUpRepeatInfoCheck = (data: string) => {
     const pairs:SignUp = JSON.parse(data);
     const user = new CustomUser(db, pairs.name, pairs.password, pairs.email);
     return user.readUser().then(res => {
-        if(!res)
-            return Promise.reject('409 Already used name or email');
+        if(parseInt(res[0].name))
+            return Promise.reject('409 Already used name');
+        else if(parseInt(res[0].email || ''))
+            return Promise.reject('409 Already used email');
         else
-            return res as boolean;
+            return true;
     })
 }
 

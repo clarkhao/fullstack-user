@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import {validateToken, updateRoleInDB} from '../../../../service';
 import { setCookie } from 'cookies-next';
+import {Authorization} from '../../../../model';
+import {db} from '../../../../utils';
 
 type Payload = {
     id: number,
@@ -43,8 +45,19 @@ async function ValidateEmailHandler (req: NextApiRequest, res: NextApiResponse) 
                 const {id, ...other} = payload;
                 console.log(`id: ${id}`)
                 return id;
-            }).then(id => {
-                return updateRoleInDB(id);
+            })
+            .then(id => {
+                const auth = new Authorization(id, db);
+                return auth.read()
+                .then(query => {
+                    return {check: query.length > 0, id}
+                });
+            })
+            .then(query => {
+                if(query.check)
+                    return updateRoleInDB(query.id);
+                else
+                    return Promise.reject(`400 invalid user`);
             }).then(result => {
                 if(result.check){
                     setCookie('token', result.token, { expires: new Date(Date.now() + 259200000), httpOnly: true, secure: true, sameSite: true });
