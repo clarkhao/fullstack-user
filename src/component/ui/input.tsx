@@ -2,7 +2,7 @@ import { IconType } from "react-icons"
 import style from './input.module.css';
 
 type InputType = 'email' | 'password' | 'text'
-type InputProps = {
+export type InputProps = {
     icon: IconType,
     type: InputType,
     id?: string,
@@ -21,7 +21,8 @@ function Input(props: InputProps) {
                 id={props.id}
                 name={props.name}
                 value={props.value}
-                placeholder={props.placeholder}/>
+                placeholder={props.placeholder}
+            />
             <p>{props.isErr && errHint()}</p>
         </div>
     )

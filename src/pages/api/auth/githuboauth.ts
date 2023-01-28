@@ -29,6 +29,7 @@ import {getCodeFromGithub,
  *         $ref: '#/components/responses/ServerMistake'
  */
 function handler(req: NextApiRequest, res: NextApiResponse) {
+    
     res.status(200).send("OK");
 };
 

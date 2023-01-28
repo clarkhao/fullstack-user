@@ -4,8 +4,7 @@ const nextConfig = {
   experimental: {
     transpilePackages: ['react-syntax-highlighter', 'swagger-client', 'swagger-ui-react'],
     allowMiddlewareResponseBody: true,
-  },
-  
+  }
 }
 
 module.exports = nextConfig

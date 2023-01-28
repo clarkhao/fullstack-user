@@ -8,6 +8,11 @@
             "secret": "GITHUB_CLIENT_SECRET"
         }
     },
+    "deta" : {
+        "home": "DETA_HOME",
+        "path": "DETA_PATH",
+        "key": "DETA_KEY"
+    },
     "tokens": {
         "key": "JWT_KEY",
         "email_key": "JWT_EMAIL_KEY"

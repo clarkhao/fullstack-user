@@ -122,11 +122,10 @@ async function ReadUserDetailByIdHandler (req: NextApiRequest, res: NextApiRespo
                         const pairs: {name:string,email:string,photo:string} = JSON.parse(data);
                         console.log(pairs);
                         const user = new CustomUser(db, pairs.name, pairs.email);
-                        user.photo = pairs.photo;
                         user.id = parseInt(userId as string);
                         const check = await user.checkUpdate();
                         if(check[0].update.endsWith('repeat')) {
-                            return Promise.reject(`409 Already used nam`);
+                            return Promise.reject(`409 Already used name`);
                         } else {
                             return user.updateUser();
                         }

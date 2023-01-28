@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://fullstack-user.fly.dev",
+      "url": "http://localhost:3000",
       "description": "development mode url"
     }
   ],

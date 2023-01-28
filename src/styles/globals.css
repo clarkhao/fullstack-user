@@ -33,7 +33,7 @@
   width: 100%;
   position: relative;
   color: var(--color-text);
-  background: var(--color-background);
+  background-color: var(--color-background);
 }
 
 button {

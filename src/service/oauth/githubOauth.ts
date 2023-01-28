@@ -32,10 +32,8 @@ const getUserInfoWithToken = (token: string) => {
             return Promise.resolve({
                 id:0,
                 name:userInfo.get('login') || '',
-                photo: userInfo.get('avatar_url'),
                 githubId: parseInt(userInfo.get('id') || ''), 
-                githubRepos: parseInt(userInfo.get('public_repos') || '',
-            )} as Github);
+            } as Github);
         else
             return Promise.reject(new Error('failed to fetch user info from github with token'));
     })
