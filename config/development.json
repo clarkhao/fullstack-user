@@ -7,8 +7,8 @@
         "port": 5432,
         "schema_user": {
             "name": "SCHEMA_USER",
-            "table_oauth": {
-                "name": "TABLE_OAUTH"
+            "table_auth": {
+                "name": "TABLE_AUTH"
             }
         }
     }

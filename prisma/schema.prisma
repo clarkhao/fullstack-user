@@ -14,35 +14,47 @@ datasource db {
 model User {
   id Int @id @default(autoincrement())
   name String @unique
-  photo String? @unique
-  githubUser GithubUser? @relation(fields: [githubUserId], references: [githubId])
-  githubUserId Int? @unique
-  emailUser EmailUser? @relation(fields: [email], references: [email])
-  email String? @unique
+
+  githubUser GithubUser?
+  emailUser EmailUser?
+  profile Profile?
+
   token Token[]
+  pets Pet[]
+  posts Post[]
+  socials Social[]
+  comments Comment[]
 
   @@map("user")
 }
 
 model GithubUser {
-  id Int @id @default(autoincrement())
+  user User @relation(fields: [id], references: [id])
+  id Int @id
   githubId Int @unique
-  githubRepos Int
-  user User?
 
   @@map("github_user")
 }
 
 model EmailUser {
-  id Int @id @default(autoincrement())
+  user User @relation(fields: [id], references: [id])
+  id Int @id
   email String @unique
   salt String 
   hash String 
   createAt DateTime @default(now()) @db.Timestamptz(3)
   lastUpdateAt DateTime @default(now()) @db.Timestamptz(3)
-  user User?
 
   @@map("email_user")
+}
+
+model Profile {
+  user User @relation(fields: [id], references: [id])
+  id Int @id
+  photo String?
+  selfIntro String
+
+  @@map("profile")
 }
 
 model Token {
@@ -60,4 +72,102 @@ enum Role {
   Seller
   Buyer
   Admin
+}
+
+model Pet {
+  id Int @id @default(autoincrement())
+  name String @unique
+  age Int @default(0)
+  photo String?
+  owner User @relation(fields: [ownerId], references: [id])
+  ownerId Int @unique
+
+  post petOnPost[]
+
+  @@map("pet")
+}
+
+model petOnPost {
+  pet Pet @relation(fields: [petId], references: [id])
+  petId Int
+  post Post @relation(fields: [postId], references: [id])
+  postId Int
+
+  @@id([petId, postId])
+  @@map("pet_on_post")
+}
+
+model Post {
+  id Int @id @default(autoincrement())
+  title     String
+  photo     String[]
+  content   Json
+  published Boolean @default(true)
+  author    User    @relation(fields: [authorId], references: [id])
+  authorId  Int
+  type      PostType
+  views     Int     @default(0)
+  likes     Int     @default(0)
+  wishes    Int     @default(0)
+  createAt DateTime @default(now()) @db.Timestamptz(3)
+  lastUpdateAt DateTime @default(now()) @db.Timestamptz(3)
+
+  tpost     TPost?
+  spost     SPost?
+  socials   Social[]
+  pet       petOnPost[]
+
+  @@map("post")
+}
+
+enum PostType {
+  trade
+  social
+}
+
+model TPost {
+  post Post @relation(fields: [postId], references: [id])
+  postId Int @id
+  price  Float
+  from DateTime @default(now()) @db.Timestamptz(3)
+  to DateTime @default(now()) @db.Timestamptz(3)
+
+  @@map("trade_post")
+}
+model SPost {
+  post Post @relation(fields: [postId], references: [id])
+  postId Int @id
+  comments Comment[]
+
+  @@map("social_post")
+}
+
+model Comment {
+  id Int @id @default(autoincrement())
+  content String
+  post SPost @relation(fields: [postId], references: [postId])
+  postId Int
+  user User @relation(fields: [userId], references: [id])
+  userId Int
+  replies Json?
+  createAt DateTime @default(now()) @db.Timestamptz(3) 
+
+  @@map("comment")
+}
+
+model Social {
+  id Int @id @default(autoincrement())
+  user User @relation(fields: [userId], references: [id])
+  userId Int
+  post Post @relation(fields: [postId], references: [id])
+  postId Int
+  type SocialType
+  createAt DateTime @default(now()) @db.Timestamptz(3)
+
+  @@map("social")
+}
+
+enum SocialType {
+  like
+  wish
 }

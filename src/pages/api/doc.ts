@@ -1,6 +1,8 @@
 import { withSwagger } from 'next-swagger-doc';
 const config = require('config');
-
+/**
+ * 生成openapi.json文件
+ */
 const swaggerHandler = withSwagger({
   definition: {
     openapi: '3.0.1',

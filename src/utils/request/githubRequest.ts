@@ -1,7 +1,7 @@
 import { AbstractAPI } from "./abstractAPI";
 const config = require('config');
 
-class GithubAPI extends AbstractAPI {
+export default class GithubAPI extends AbstractAPI {
     private client_id: string;
     private client_secret: string;
     private code: string;
@@ -31,5 +31,3 @@ class GithubAPI extends AbstractAPI {
           .catch(this.handleError.bind(this));
     }
 }
-
-export {GithubAPI};

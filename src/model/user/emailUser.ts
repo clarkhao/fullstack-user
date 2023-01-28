@@ -5,8 +5,8 @@ const config = require('config');
 import {PGConnect} from '../../utils';
 const crypto = require('crypto');
 
-type Count = Pick<User, 'name'|'email'>;
-type CheckUpdate = {update: string};
+type Count = {'name': string, 'email': string};
+type CheckUpdate = {'update': string};
 
 class CustomUser extends MainUser<Token> implements EmailUser {
     email: string;
@@ -22,22 +22,26 @@ class CustomUser extends MainUser<Token> implements EmailUser {
     }
     public createUser() {
         return this.db.connect(`
-            with new_email_user as (
-                insert into auth.email_user ("email", "salt", "hash")
-                values ($1,$2,$3)
+            with new_user as (
+                insert into auth.user ("name") 
+                values ($1)
                 returning *
             ),
-            new_user as (
-                insert into auth.user ("name", "githubUserId", "photo", "email")
-                select $4, $5, $6, "email" from new_email_user
+            with new_email_user as (
+                insert into auth.email_user ("id", "email", "salt", "hash")
+                select "id", $2,$3,$4 from new_user
                 returning *
             )
             insert into auth.token ("role", "emailToken", "userId")
-            select $7, $8, "id" from new_user
+            select $5, $6, "id" from new_user
             returning *;
-        `, [this.email, this.salt, this.hash, this.name, this.githubUserId, this.photo, [], null], false)
+        `, [this.name, this.email, this.salt, this.hash, [], null], false)
         .then(res => res as Token[]);
     }
+    /**
+     * 分别检查是否有重复的name或者email
+     * @returns [{name:1|0,email:1|0}]
+     */
     public readUser() {
         return this.db.connect<Count>(`
         SELECT
@@ -47,8 +51,8 @@ class CustomUser extends MainUser<Token> implements EmailUser {
           ELSE 0
         END as name,
         CASE
-          WHEN (SELECT COUNT(*) FROM auth.user WHERE email = $2) > 0 
-          THEN (SELECT COUNT(*) FROM auth.user WHERE email = $2)
+          WHEN (SELECT COUNT(*) FROM auth.email_user WHERE email = $2) > 0 
+          THEN (SELECT COUNT(*) FROM auth.email_user WHERE email = $2)
           ELSE 0
         END as email;
         `, [this.name, this.email])
@@ -58,7 +62,8 @@ class CustomUser extends MainUser<Token> implements EmailUser {
         return this.db.connect(`
         SELECT
         CASE
-          WHEN (SELECT name FROM auth.user WHERE email = $2) = $1
+          WHEN (SELECT name FROM auth.user as u,auth.email_user as e 
+                WHERE e.email = $2 and e.id=u.id) = $1
           THEN 'photo'
           ELSE (SELECT
                 CASE

@@ -4,6 +4,7 @@ import axios from 'axios';
 enum ContentType {
     json = "application/json;charset=UTF-8",
     params = "application/x-www-form-urlencoded",
+    form = "multipart/form-data"
 }
 type AxiosResult = {
     data: URLSearchParams,
@@ -11,19 +12,25 @@ type AxiosResult = {
 }
 
 abstract class AbstractAPI {
-    protected readonly http: AxiosInstance;
+    protected http: AxiosInstance;
+    protected readonly url: string;
+    protected readonly contentType: string;
     protected constructor(
         protected readonly baseURL: string,
         protected readonly path?: string,
-        protected readonly contentType: keyof typeof ContentType = 'params',
+        protected readonly content_type: keyof typeof ContentType = 'params',
     ) {
-        baseURL = path ? baseURL.concat(path) : baseURL;
+        this.url = path ? baseURL.concat(path) : baseURL;
+        this.contentType = ContentType[content_type];
         this.http = axios.create({
-            baseURL,
+            baseURL: this.url,
             headers: {
-                'Content-Type': ContentType[contentType],
+                'Content-Type': this.contentType,
             },
         })
+    }
+    protected createAxios() {
+        
     }
     protected paramsSerialized(data: Record<string,string>) {
         if(this.contentType === 'json')

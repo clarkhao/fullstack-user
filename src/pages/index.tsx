@@ -8,8 +8,8 @@ import style from '../styles/Home.module.css';
  */
 function Home() {
   return (
-    <div id='layout' className={`layout-dark`}>
-      
+    <div>
+      HomePage
     </div>
   )
 }
