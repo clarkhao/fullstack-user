@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 import crypto from 'crypto';
 const config = require('config');
 
@@ -37,10 +40,16 @@ class Cryption {
         );
         return decryptedData.toString();
     }
+    /**
+     * 解密req.secret，并验证其是否是密语
+     */
     public isSecret() {
         this.decryptedSecret = this.decryptData(this.secret,this.secretKey);
         return this.decryptedSecret.endsWith(this.ending);
     }
+    /**
+     * 解密req.data，并使用密语secret对其进行生成签名sign, 然后比对req.sign，验证签名
+     */
     public isSignValidated() {
         const decrypted = this.decryptData(this.data, this.dataKey);
         this.decrypted = decrypted;

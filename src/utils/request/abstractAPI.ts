@@ -33,7 +33,7 @@ abstract class AbstractAPI {
         
     }
     protected paramsSerialized(data: Record<string,string>) {
-        if(this.contentType === 'json')
+        if(this.contentType === 'json' || this.contentType === 'form')
             return data;
         else
             return new URLSearchParams(data);

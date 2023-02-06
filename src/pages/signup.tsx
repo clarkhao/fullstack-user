@@ -26,32 +26,28 @@ function SignUp() {
             </div>
             <div className='main'>
                 <Input 
-                    icon={FiUser}
                     type="text"
+                    id='signup_name'
                     name="signup_name"
                     value={name}
-                    placeholder='张三'
                     isErr={true}/>
                 <Input 
-                    icon={FiMail}
                     type='email'
+                    id='signup_email'
                     name='signup_email'
                     value={email}
-                    placeholder='123@abc.com'
                     isErr={true}/>
                 <Input 
-                    icon={FiLock}
                     type='password'
+                    id='signup_pwd'
                     name='signup_pwd'
                     value={pwd}
-                    placeholder='********'
                     isErr={true}/>
                 <Input 
-                    icon={FiLock}
                     type='password'
+                    id='signup_repwd'
                     name='signup_repwd'
                     value={rePwd}
-                    placeholder='********'
                     isErr={true}/>
                 <button>OK</button>
             </div>
