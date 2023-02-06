@@ -27,6 +27,13 @@ class Mailer {
             }
           });
     }
+    /**
+     * 发送邮件
+     * @param to 接受邮件地址
+     * @param subject 主题，标题
+     * @param content 内容
+     * @returns Promise object
+     */
     sendMail(to:string, subject:string, content:string): Promise<MailResponse> {
         return this.mailer.sendMail({
             from: `"Clark" <${process.env[config.get("mailer.auth_user")]}>`,

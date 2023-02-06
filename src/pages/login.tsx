@@ -4,9 +4,8 @@
 import { Fragment } from "react";
 import Input from "../component/ui/input";
 import style from './login.module.css';
-import type {InputProps} from '../component';
 import React from "react";
-import {FiMail} from 'react-icons/fi';
+
 export default function Login() {
     const [email, setEmail] = React.useState('');
     return <Fragment>
@@ -16,11 +15,10 @@ export default function Login() {
                 <div className={style.welcome}></div>
                 <div className={style.form}>
                     <Input 
-                        icon={FiMail}
                         type="email"
+                        id="login_input"
                         name="email"
                         value={email}
-                        placeholder="电子邮箱"
                     />
                 </div>
             </div>
