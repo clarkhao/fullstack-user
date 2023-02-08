@@ -1,6 +1,8 @@
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import DropZone from '../component/ui/dropZone';
+import SvgIcon from '@mui/material/SvgIcon';
+import {iconLibrary} from '../component/utils/define';
 
 export default {
   title: 'UI/DropZone',
@@ -16,5 +18,5 @@ DropZoneStory.args = {
     handleAddFiles: (data) => {
       
     },
-    err: {name: 'somefile', msg: ['some']}
+    child: <SvgIcon children={iconLibrary.get('import')} />
 };
