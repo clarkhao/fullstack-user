@@ -1,9 +1,13 @@
-import style from './dropZone.module.css';
+//应用
 import React from 'react';
+import {FileNameListType,FileErrMsgType} from '../utils/type';
+import {iconLibrary} from '../utils/define';
+//style
+import style from './dropZone.module.css';
 import {css} from '@emotion/react';
-import List from "./list";
-import IconChoose from './icon';
-import {FileNameListType,FileErrMsgType} from '../type';
+import { useTheme } from '@mui/material/styles';
+//组件
+import List from './list';
 
 export type DropZoneType = {
     /**
@@ -11,28 +15,25 @@ export type DropZoneType = {
      */
     handleAddFiles: (data: FileList | File[]) => void;
     /**
-     * height of the container
-     */
-    height?: string;
-    /**
      * formData passed by page
      */
     list: FileNameListType[];
     /**
-     * children component
+     * height of the container
      */
-    children: JSX.Element
+    height?: string;
     /**
      * remove item handler
      */
     handleRemove?: (id:string) => void;
     /**
-     * is the file drop here an error?
+     * 
      */
-    err: FileErrMsgType;
+    child?: JSX.Element;
 }
 
-function DropZone({handleAddFiles, children=<IconChoose iconType="import" iconSize={5} /> , ...props}: DropZoneType) {
+function DropZone({handleAddFiles, child, ...props}: DropZoneType) {
+    const theme = useTheme();
     const [dragActive, setDragActive] = React.useState(false);
     const handleDrag: React.DragEventHandler = (e) => {
         e.preventDefault();
@@ -62,9 +63,11 @@ function DropZone({handleAddFiles, children=<IconChoose iconType="import" iconSi
             handleAddFiles(e.target.files);
     }
     return (
-        <div 
+        <div
             className={[style.container, (dragActive?style.highlight:'')].join(' ')}
-            css={css`height: ${props.height};`}
+            css={css`height: ${props.height};
+                    --hover-upload-color: ${theme.palette.secondary.dark};
+                    --upload-color: ${theme.palette.secondary.light};`}
             onDragEnter={handleDrag}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
@@ -72,16 +75,15 @@ function DropZone({handleAddFiles, children=<IconChoose iconType="import" iconSi
         >
             <input type='file' id="drop-files" multiple className={style.upload} onChange={handleChange}/>
             <label htmlFor="drop-files" className={style.droparea}>
-                {children}
+                {child}
             </label>
             <div className={style.list}>
-                {props.list?.length > 0 ? <List 
-                        list={props.list}
-                        rIcon='trash'
-                        handleRemove={props.handleRemove}/> : <div className={style.before}>
-                        <p>Drag & Drop your files here</p>
-                        <p>or Click to select files</p>
-                    </div>}
+                {props.list?.length > 0 ? 
+                <List list={props.list} lIcon='file' rIcon='trash' handleRemove={props.handleRemove}/> : 
+                <div className={style.before}>
+                    <p>Drag & Drop your files here</p>
+                    <p>or Click to select files</p>
+                </div>}
             </div>
         </div>
     )

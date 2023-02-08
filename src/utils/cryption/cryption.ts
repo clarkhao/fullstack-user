@@ -1,4 +1,5 @@
 /**
+ * secret取自req.secret密语，sign取自req.sign,签名，data取自req.data是加密后的前端数据
  * 
  */
 import crypto from 'crypto';

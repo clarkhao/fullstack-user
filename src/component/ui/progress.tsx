@@ -1,15 +1,30 @@
-import LinearProgress from '@mui/material/LinearProgress';
+/**
+ * 
+ */
+//应用
 import React from 'react';
+//style
+import style from './progress.module.css';
+//组件
+import LinearProgress from '@mui/material/LinearProgress';
 
-type progressType = {
-    id: string;
+export type ProgressType = {
+    /**
+     * value from 0 to 100 when status is determinate
+     */
     value: number;
+    /**
+     * text show progress
+     */
+    text: string;
 }
-
-function Progress({id,value, ...props}: progressType) {
+function Progress({value, ...props}: ProgressType) {
     return (
-        <div>
-            <LinearProgress />
+        <div className={style.container}>
+            <h2>{value > 0 ? `${value}%` : props.text}</h2>
+            {value > 0 ? <LinearProgress color='primary' value={value} variant='determinate' /> :
+                            <LinearProgress color='primary' />}
+            
         </div>
     )
 }
