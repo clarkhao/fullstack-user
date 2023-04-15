@@ -6,8 +6,8 @@
 import z from 'zod';
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB
-const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/x-icon', 'application/json'] as const;
-const ALLOWED_FILE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.json'] as const; 
+const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/x-icon', 'application/json', 'image/svg+xml'] as const;
+const ALLOWED_FILE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.json', '.svg'] as const; 
 
 export const fileSchema = z.object({
     type: z.enum(ALLOWED_FILE_TYPES),

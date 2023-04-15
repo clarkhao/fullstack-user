@@ -4,5 +4,5 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #F6F8FB;
+    background-color: var(--background-color);
 }

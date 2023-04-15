@@ -33,7 +33,7 @@ async function loadHandler (req: NextApiRequest, res: NextApiResponse) {
         detaAPI.createAxios();
         const blob = await detaAPI.readFile();
         const buffer = await blob.arrayBuffer();
-        res.setHeader('content-type', 'image/jpeg');
+        res.setHeader('content-type', 'application/json');
         res.send(Buffer.from(buffer));
     } catch(err) {
         const error = new Error(`${err}`);

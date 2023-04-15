@@ -22,7 +22,7 @@ function Progress({value, ...props}: ProgressType) {
     return (
         <div className={style.container}>
             <h2>{value > 0 ? `${value}%` : props.text}</h2>
-            {value > 0 ? <LinearProgress color='primary' value={value} variant='determinate' /> :
+            {value > 0 ? <LinearProgress color='primary' value={value} variant='determinate' /> : 
                             <LinearProgress color='primary' />}
             
         </div>
