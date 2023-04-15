@@ -38,13 +38,3 @@ next-env.d.ts
 
 #Dockerfile
 Dockerfile
-
-#fly
-fly.toml
-
-#prisma
-prisma/
-.prisma
-
-#nexus
-nexus/

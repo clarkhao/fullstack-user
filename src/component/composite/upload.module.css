@@ -1,5 +1,5 @@
 .container {
-    background-color: #FFFFFF;
+    background-color: var(--upload-background-color);
     width: 50%;
     height: 80vh;
     display: flex;

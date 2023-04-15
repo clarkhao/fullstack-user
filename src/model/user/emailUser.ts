@@ -27,7 +27,7 @@ class CustomUser extends MainUser<Token> implements EmailUser {
                 values ($1)
                 returning *
             ),
-            with new_email_user as (
+            new_email_user as (
                 insert into auth.email_user ("id", "email", "salt", "hash")
                 select "id", $2,$3,$4 from new_user
                 returning *

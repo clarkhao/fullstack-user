@@ -12,6 +12,8 @@ import { Fragment } from "react";
 import {iconLibrary} from '../utils/define';
 //style
 import style from './upload.module.css';
+import { useTheme } from '@mui/material/styles';
+import {css} from '@emotion/react';
 //组件
 import {FileListType,FileNameListType,FileErrMsgType} from '../utils/type';
 import Button from '@mui/material/Button';
@@ -22,7 +24,7 @@ import "react-toastify/dist/ReactToastify.css";
 import SvgIcon from '@mui/material/SvgIcon';
 import Progress from '../ui/progress';
 //hook
-import {uploadReducer, initialUploadState} from '../utils/hook';
+import {uploadReducer, initialUploadState} from '../utils/hook/upload';
 
 function Upload() {
     /**
@@ -33,6 +35,7 @@ function Upload() {
      * process表示上传百分比，网络请求后清理
      * toastId表示最后一个toast,此时清理error
      */
+    const theme = useTheme();
     const [state, dispatch] = React.useReducer(uploadReducer, initialUploadState)
     const addFiles = (data: FileList | File[]) => {
         const files = [] as FileListType[];
@@ -117,7 +120,8 @@ function Upload() {
     return (
         <Fragment>
             {state.start ? <div className={style.progress}><Progress value={state.progress} text='uploading...' /></div> : 
-            <form className={style.container}>
+            <form className={style.container} 
+                css={css`--upload-background-color: ${theme.palette.background.default};`}>
                 <div className={style.title}>
                     <h1>Upload Your Files</h1>
                 </div>
